@@ -3,9 +3,9 @@
 USER=$(whoami)
 USER_LOWER="${USER,,}"
 USER_HOME="/home/${USER_LOWER}"
-WORKDIR="${USER_HOME}/.nezha-agent"
+WORKDIR="/home/${USER}/.nezha-agent"
 WORK="/home/${USER}/.nezha-dashboard"
-FILE_PATH="${USER_HOME}/.s5"
+FILE_PATH="/home/${USER}/.s5"
 HYSTERIA_WORKDIR="${USER_HOME}/.hysteria"
 HYSTERIA_CONFIG="${HYSTERIA_WORKDIR}/config.yaml"  # Hysteria 配置文件路径
 CRON_S5="nohup ${FILE_PATH}/s5 -c ${FILE_PATH}/config.json >/dev/null 2>&1 &"
@@ -24,7 +24,6 @@ if command -v pm2 > /dev/null 2>&1 && [[ $(which pm2) == "${USER_HOME}/.npm-glob
   (crontab -l | grep -F "$REBOOT_COMMAND") || (crontab -l; echo "$REBOOT_COMMAND") | crontab -
   (crontab -l | grep -F "$CRON_JOB") || (crontab -l; echo "$CRON_JOB") | crontab -
 else
-  # 检查所需文件是否存在，并添加 crontab 任务
   if [ -f "${WORKDIR}/start.sh" ] && [ -f "${FILE_PATH}/config.json" ] && [ -f "$HYSTERIA_CONFIG" ]; then
     echo "添加 nezha, socks5 和 Hysteria 的 crontab 重启任务"
     (crontab -l | grep -F "@reboot pkill -kill -u $USER && ${CRON_S5} && ${CRON_NEZHA} && ${CRON_HYSTERIA}") || (crontab -l; echo "@reboot pkill -kill -u $USER && ${CRON_S5} && ${CRON_NEZHA} && ${CRON_HYSTERIA}") | crontab -
